@@ -212,6 +212,7 @@ func (mr MergeRegion) Influence(opInfluence OpInfluence, region *core.RegionInfo
 // SplitRegion is an OperatorStep that splits a region.
 type SplitRegion struct {
 	StartKey, EndKey []byte
+	Method           string
 }
 
 func (sr SplitRegion) String() string {

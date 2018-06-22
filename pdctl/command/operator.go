@@ -262,7 +262,7 @@ func removePeerCommandFunc(cmd *cobra.Command, args []string) {
 // NewSplitRegionCommand returns a command to split a region.
 func NewSplitRegionCommand() *cobra.Command {
 	c := &cobra.Command{
-		Use:   "split-region <region_id>",
+		Use:   "split-region <region_id> <logical-middle>",
 		Short: "split a region",
 		Run:   splitRegionCommandFunc,
 	}
@@ -270,12 +270,11 @@ func NewSplitRegionCommand() *cobra.Command {
 }
 
 func splitRegionCommandFunc(cmd *cobra.Command, args []string) {
-	if len(args) != 1 {
+	if len(args) < 1 {
 		fmt.Println(cmd.UsageString())
 		return
 	}
-
-	ids, err := parseUint64s(args)
+	ids, err := parseUint64s(args[0:1])
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -284,6 +283,11 @@ func splitRegionCommandFunc(cmd *cobra.Command, args []string) {
 	input := make(map[string]interface{})
 	input["name"] = cmd.Name()
 	input["region_id"] = ids[0]
+	// Avaliable methods are half, logical-middle.
+	input["split_method"] = "half"
+	if args[1] == "logical-middle" {
+		input["split_method"] = "logical-middle"
+	}
 	postJSON(cmd, operatorsPrefix, input)
 }
 

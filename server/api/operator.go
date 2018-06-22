@@ -207,7 +207,12 @@ func (h *operatorHandler) Post(w http.ResponseWriter, r *http.Request) {
 			h.r.JSON(w, http.StatusBadRequest, "missing region id")
 			return
 		}
-		if err := h.AddSplitRegionOperator(uint64(regionID)); err != nil {
+		splitMethod, ok := input["split_method"].(string)
+		if !ok {
+			h.r.JSON(w, http.StatusBadRequest, "missing split method")
+		}
+
+		if err := h.AddSplitRegionOperator(uint64(regionID), splitMethod); err != nil {
 			h.r.JSON(w, http.StatusInternalServerError, err.Error())
 			return
 		}

@@ -516,7 +516,7 @@ func (h *Handler) AddMergeRegionOperator(regionID uint64, targetID uint64) error
 }
 
 // AddSplitRegionOperator adds an operator to split a region.
-func (h *Handler) AddSplitRegionOperator(regionID uint64) error {
+func (h *Handler) AddSplitRegionOperator(regionID uint64, splitMethod string) error {
 	c, err := h.getCoordinator()
 	if err != nil {
 		return errors.Trace(err)
@@ -527,7 +527,7 @@ func (h *Handler) AddSplitRegionOperator(regionID uint64) error {
 		return ErrRegionNotFound(regionID)
 	}
 
-	step := schedule.SplitRegion{StartKey: region.StartKey, EndKey: region.EndKey}
+	step := schedule.SplitRegion{StartKey: region.StartKey, EndKey: region.EndKey, Method: splitMethod}
 	op := schedule.NewOperator("adminSplitRegion", regionID, region.GetRegionEpoch(), schedule.OpAdmin, step)
 	if ok := c.addOperator(op); !ok {
 		return errors.Trace(errAddOperator)
